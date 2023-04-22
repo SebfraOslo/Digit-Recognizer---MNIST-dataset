@@ -16,6 +16,10 @@ from keras.preprocessing.image import ImageDataGenerator
 mnist = keras.datasets.mnist
 (train_X, train_y), (test_X, test_y) = mnist.load_data()
 
+#expand 1 more dimention as 1 for colour channel gray
+train_X = train_X.reshape(train_X.shape[0], 28, 28,1)
+test_X = test_X.reshape(test_X.shape[0], 28, 28,1)
+
 # Preprocessing - Z-score
 mean_px = train_X.mean().astype(np.float32)
 std_px = train_X.std().astype(np.float32)
