@@ -22,11 +22,6 @@ std_px = train_X.std().astype(np.float32)
 def standardize(x): 
     return (x-mean_px)/std_px
 
-# One hot encoding of label
-from keras.utils.np_utils import to_categorical
-train_y = to_categorical(train_y)
-num_classes = train_y.shape[1]
-
 # Define the model
 seed = 43
 np.random.seed(seed)
@@ -45,7 +40,7 @@ model = Sequential([
 
 # Compile the model
 model.compile(optimizer='adam',
- loss='categorical_crossentropy',
+ loss='sparse_categorical_crossentropy',
  metrics=['accuracy'])
 
 # Run the model
