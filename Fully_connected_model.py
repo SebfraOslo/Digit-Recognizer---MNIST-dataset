@@ -1,4 +1,5 @@
 # Import the required libraries
+import os
 import numpy as np # linear algebra
 import pandas as pd 
 import matplotlib.pyplot as plt
@@ -43,15 +44,27 @@ model.compile(optimizer='adam',
  loss='sparse_categorical_crossentropy',
  metrics=['accuracy'])
 
-# Run the model
+# Split the data
 from sklearn.model_selection import train_test_split
 
 X = train_X
 y = train_y
 train_X, val_X, train_y, val_y = train_test_split(train_X, train_y, test_size=0.10, random_state=42)
 
+# Create a log directory 
+root_logdir = os.path.join(os.curdir, "my_logs")
+
+def get_run_logdir():
+    import time
+    run_id = time.strftime("run_%Y_%m_%d-%H_%M_%S")
+    return os.path.join(root_logdir, run_id)
+
+run_logdir = get_run_logdir()
+
+# Run the model
 from keras.callbacks import EarlyStopping
 
+tensorboard_cb = keras.callbacks.TensorBoard(run_logdir)
 early_stopping = EarlyStopping(
     patience=5,
     min_delta=0.001,
@@ -62,7 +75,7 @@ history = model.fit(
     validation_data=(val_X, val_y),
     batch_size=512,
     epochs=200,
-    callbacks=[early_stopping],verbose=1)
+    callbacks=[early_stopping, tensorboard_cb],verbose=1)
 
 # Make predictions on test data
 from sklearn.metrics import accuracy_score
